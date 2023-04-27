@@ -1,0 +1,27 @@
+﻿
+.spin-comp {
+    width: 60px;
+    height: 60px;
+    position: absolute;
+    top: 50%;
+    left: 0;
+    bottom: 60px;
+    right: 0;
+    margin: auto;
+}
+
+.loading-text-comp {
+    width: 15em;
+    height: 60px;
+    position: absolute;
+    top: 70%;
+    left: 0;
+    bottom: 60px;
+    right: 0;
+    margin: auto;
+    font-weight: 900;
+}
+
+.top {
+    margin-top: 10em;
+}

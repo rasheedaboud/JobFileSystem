@@ -1,0 +1,220 @@
+﻿@page "/contacts2"
+
+@using JobFileSystem.Client.Features.Contacts.Components
+@using JobFileSystem.Shared.Contacts
+@using Shared.Enums;
+@using Syncfusion.Blazor.Grids;
+@using Syncfusion.Blazor.Data;
+@using Syncfusion.Blazor;
+@using JobFileSystem.Shared.Enums
+@using JobFileSystem.Client.Features;
+@using Syncfusion.Blazor.Inputs;
+@using Syncfusion.Blazor.Popups
+@using Syncfusion.Blazor.DropDowns;
+@using global::Client.Features.Contacts
+
+
+<AuthorizeView Roles="superuser">
+
+
+
+    <MudText Typo="Typo.h4"
+             Class="mb-3">Contacts</MudText>
+
+    <SfGrid @ref="_grid"
+            TValue="ContactDto"
+            AllowExcelExport="true"
+            AllowFiltering="true"
+            AllowGrouping="true"
+            AllowMultiSorting="true"
+            AllowPaging="true"
+            AllowResizing="true"
+            AllowSelection="true"
+            AllowTextWrap="true"
+            AllowSorting="true"
+            ContextMenuItems="@(new List<object>(){ "Add","Copy", "Edit", "Delete", "Refresh", "ExcelExport"})"
+            Toolbar="_toolBarEdit">
+
+        <GridEvents OnToolbarClick="OnToolbarClickHandler"
+                    OnActionComplete="OnActionCompleteHandler"
+                    OnActionBegin="OnActionBeginHandler"
+                    TValue="ContactDto" />
+
+        <GridFilterSettings Type="Syncfusion.Blazor.Grids.FilterType.Excel" />
+
+        <GridSelectionSettings Mode="Syncfusion.Blazor.Grids.SelectionMode.Row"
+                               Type="SelectionType.Single" />
+
+
+        <GridEditSettings AllowAdding="true"
+                          AllowDeleting="true"
+                          AllowEditing="true"
+                          ShowConfirmDialog="true"
+                          ShowDeleteConfirmDialog="true"
+                          Context="validator"
+                          Mode="EditMode.Dialog">
+
+
+            <Validator >
+                @{
+                    ValidatorTemplateContext txt = validator as ValidatorTemplateContext;
+                }
+                <SyncfusionValidator context="txt"
+                                     @ref="_syncfusionValidator"
+                                     ValidationUrl="api/Contacts/validate">
+
+
+                </SyncfusionValidator>
+
+
+            </Validator>
+            <Template>
+                @{
+                    var SelectedItem = validator as ContactDto;
+
+                    <MudGrid>
+                        <MudItem xs="12">
+                            <MudCard Style="width:90%">
+                                <MudCardContent>
+                                    <div class="form-row mb-5">
+                                        <div class="form-group col-lg">
+                                            <SfTextBox @bind-Value="@SelectedItem.Name"
+                                                   Placeholder="Name"
+                                                   FloatLabelType="FloatLabelType.Always" />
+
+                                            <small><ValidationMessage For="@(() => SelectedItem.Name)" /></small>
+                                        </div>
+                                    </div>
+                                    <div class="form-row mb-5">
+                                        <div class="form-group col-lg">
+                                            <SfTextBox @bind-Value="@SelectedItem.Company"
+                                                   Placeholder="Company"
+                                                   FloatLabelType="FloatLabelType.Always" />
+
+                                            <small><ValidationMessage For="@(() => SelectedItem.Company)" /></small>
+                                        </div>
+                                    </div>
+                                    <div class="form-row mb-5">
+                                        <div class="form-group col-lg">
+                                            <SfTextBox @bind-Value="@SelectedItem.Email"
+                                                   Placeholder="Email"
+                                                   FloatLabelType="FloatLabelType.Always" />
+
+                                            <small><ValidationMessage For="@(() => SelectedItem.Email)" /></small>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-row mb-5">
+                                        <div class="form-group col-lg">
+                                            <SfTextBox @bind-Value="@SelectedItem.Phone"
+                                                   Placeholder="Phone"
+                                                   FloatLabelType="FloatLabelType.Always" />
+
+                                            <small><ValidationMessage For="@(() => SelectedItem.Phone)" /></small>
+                                        </div>
+                                    </div>
+                                    <div class="form-row mb-5">
+                                        <div class="form-group col-lg">
+                                            <SfComboBox @bind-Value="@SelectedItem.ContactMethod"
+                                                    TItem="string"
+                                                    TValue="string"
+                                                    DataSource="@(ContactMethod.List.Select(x=>x.Name))"
+                                                    Placeholder="Contact Method"
+                                                    FloatLabelType="FloatLabelType.Always">
+                                            </SfComboBox>
+
+                                            <small><ValidationMessage For="@(() => SelectedItem.ContactMethod)" /></small>
+                                        </div>
+                                    </div>
+                                    <div class="form-row mb-5">
+                                        <div class="form-group col-lg">
+                                            <SfComboBox @bind-Value="@SelectedItem.ContactType"
+                                                    TItem="string"
+                                                    TValue="string"
+                                                    DataSource="@(ContactType.List.Select(x=>x.Name))"
+                                                    Placeholder="Contact Type"
+                                                    FloatLabelType="FloatLabelType.Always">
+                                            </SfComboBox>
+
+                                            <small><ValidationMessage For="@(() => SelectedItem.ContactType)" /></small>
+                                        </div>
+                                    </div>
+                                </MudCardContent>
+                            </MudCard>
+                        </MudItem>
+                    </MudGrid>
+                }
+            </Template>
+
+        </GridEditSettings>
+
+        <SfDataManager Adaptor="Adaptors.ODataV4Adaptor"
+                       Url="@(ContactRoutes.GetAll(NavigationManager.BaseUri))"
+                       CrudUrl="odata/ContactsOdata" />
+
+
+        <GridColumns>
+            <GridColumn Field="@(nameof(ContactDto.Id))"
+                        HeaderText="Id"
+                        IsPrimaryKey="true"
+                        IsIdentity="true"
+                        Visible="false"
+                        Width="200px" />
+
+
+            <GridColumn Field="@(nameof(ContactDto.Name))"
+                        HeaderText="Name"
+                        Width="200px" />
+
+            <GridColumn Field="@(nameof(ContactDto.Company))"
+                        HeaderText="Company"
+                        Width="200px" />
+
+            <GridColumn Field="@(nameof(ContactDto.Phone))"
+                        HeaderText="Phone"
+                        Format="yyy-MM-dd"
+                        Width="200px" />
+
+            <GridColumn Field="@(nameof(ContactDto.Email))"
+                        HeaderText="Email"
+                        Width="200px" />
+
+            <GridColumn Field="@(nameof(ContactDto.ContactMethod))"
+                        Type="Syncfusion.Blazor.Grids.ColumnType.String"
+                        HeaderText="Contact Method"
+                        Context="contactMethod"
+                        Width="200px">
+                <EditTemplate>
+
+                    <SfComboBox @bind-Value="@((contactMethod as ContactDto).ContactMethod)"
+                                TItem="string"
+                                TValue="string"
+                                DataSource="@(ContactMethod.List.Select(x=>x.Name))"
+                                Placeholder="Contact Method"
+                                FloatLabelType="FloatLabelType.Always">
+                    </SfComboBox>
+
+
+                </EditTemplate>
+            </GridColumn>
+            <GridColumn Field="@(nameof(ContactDto.ContactType))"
+                        Type="Syncfusion.Blazor.Grids.ColumnType.String"
+                        HeaderText="Contact Type"
+                        Context="contactType"
+                        Width="200px">
+
+                <EditTemplate>
+                    <SfComboBox @bind-Value="@((contactType as ContactDto).ContactType)"
+                                TItem="string"
+                                TValue="string"
+                                DataSource="@(ContactType.List.Select(x=>x.Name))"
+                                Placeholder="Contact Type"
+                                FloatLabelType="FloatLabelType.Always">
+                    </SfComboBox>
+                </EditTemplate>
+            </GridColumn>
+        </GridColumns>
+
+    </SfGrid>
+
+</AuthorizeView>

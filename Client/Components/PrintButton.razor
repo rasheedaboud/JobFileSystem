@@ -1,0 +1,45 @@
+﻿@using Syncfusion.Blazor.Buttons;
+@using Syncfusion.Blazor.Popups;
+
+
+@if (IsBusy)
+{
+
+    <SfButton CssClass="e-control e-btn e-lib e-tbar-btn e-tbtn-txt"
+              Disabled="IsDisabled">
+        <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+        Working...
+    </SfButton>
+
+}
+else
+{
+    <SfTooltip Target="#spinbutton" Content="@(string.IsNullOrEmpty(ToolTip) ? "" : ToolTip)">
+        <SfButton id="spinbutton"             
+            CssClass="e-control e-btn e-lib e-tbar-btn e-tbtn-txt"
+            
+                  @onclick="Click"
+                  Disabled="IsDisabled">
+            <span class="e-print e-icons e-btn-icon e-icon-left"></span>
+            <span class="e-tbar-btn-text">
+                Print
+            </span>
+        </SfButton>
+    </SfTooltip>
+}
+
+@code {
+
+
+    [Parameter] public EventCallback<MouseEventArgs> onClick { get; set; }
+    [Parameter] public bool IsBusy { get; set; }
+    [Parameter] public string ToolTip { get; set; }
+
+    [Parameter]
+    public bool IsDisabled { get; set; }
+
+    private async Task Click()
+    {
+        await onClick.InvokeAsync(null);
+    }
+}

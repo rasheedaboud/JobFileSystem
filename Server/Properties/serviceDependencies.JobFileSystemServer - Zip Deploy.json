@@ -1,0 +1,16 @@
+{
+  "dependencies": {
+    "identityapp1": {
+      "secretStore": null,
+      "resourceId": null,
+      "type": "identityapp.aad",
+      "connectionId": null
+    },
+    "storage1": {
+      "secretStore": "AzureAppSettings",
+      "resourceId": "/subscriptions/[parameters('subscriptionId')]/resourceGroups/[parameters('resourceGroupName')]/providers/Microsoft.Storage/storageAccounts/jobfilesystem",
+      "type": "storage.azure",
+      "connectionId": "StorageConnectionString"
+    }
+  }
+}

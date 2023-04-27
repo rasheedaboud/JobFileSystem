@@ -1,0 +1,90 @@
+﻿@page "/contacts"
+
+@using JobFileSystem.Client.Features.Contacts.Components
+@using JobFileSystem.Shared.Contacts
+@using Shared.Enums;
+@using Syncfusion.Blazor.Grids;
+@using Syncfusion.Blazor.Data;
+@using Syncfusion.Blazor;
+@using global::Client.Features.Contacts
+
+<MudText Typo="Typo.h4"
+         Class="mb-3">Contacts</MudText>
+
+<SfGrid @ref="_grid"
+        TValue="ContactDto"
+        AllowExcelExport="true"
+        AllowFiltering="true"
+        AllowGrouping="true"
+        AllowMultiSorting="true"
+        AllowPaging="true"
+        AllowResizing="true"
+        AllowSelection="true"
+        AllowTextWrap="true"
+        AllowSorting="true"
+        ContextMenuItems="@(new List<object>(){ "Add","Copy", "Edit", "Delete", "Refresh", "ExcelExport"})"
+        Toolbar="@(State.Value.SelectedItem is null ? _toolBar :_toolBarEdit)">
+
+    <GridFilterSettings Type="Syncfusion.Blazor.Grids.FilterType.Excel" />
+
+    <GridSelectionSettings Mode="SelectionMode.Row"
+                           Type="SelectionType.Single" />
+
+    <GridEvents RowSelected="RowSelected"
+                RowDeselected="RowDeselected"
+                OnActionBegin="OnBeginHandlerAsync"
+                OnToolbarClick="OnToolbarClickHandler"
+                TValue="ContactDto" />
+
+    <GridEditSettings  AllowAdding="true"
+                       AllowDeleting="true"
+                       AllowEditing="true"
+                       ShowConfirmDialog="true"
+                       Mode="EditMode.Normal" />
+
+    <SfDataManager Adaptor="Adaptors.ODataV4Adaptor"
+                   Url="@(ContactRoutes.GetAll(NavigationManager.BaseUri))" />
+
+
+  <GridColumns>
+        <GridColumn Field="@(nameof(ContactDto.Id))"
+                    HeaderText="Id"
+                    IsPrimaryKey="true"
+                    IsIdentity="true"
+                    Visible="false"
+                    Width="200px" />
+
+
+        <GridColumn Field="@(nameof(ContactDto.Name))"
+                    HeaderText="Name"
+                    Width="200px" />
+
+        <GridColumn Field="@(nameof(ContactDto.Company))"
+                    HeaderText="Company"
+                    Width="200px" />
+
+        <GridColumn Field="@(nameof(ContactDto.Phone))"
+                    HeaderText="Phone"
+                    Format="yyy-MM-dd"
+                    Width="200px" />
+
+        <GridColumn Field="@(nameof(ContactDto.Email))"
+                    HeaderText="Email"
+                    Width="200px" />
+
+        <GridColumn Field="@(nameof(ContactDto.ContactMethod))"
+                    HeaderText="Contact Method"
+                    Width="200px" />
+        <GridColumn Field="@(nameof(ContactDto.ContactType))"
+                    HeaderText="Contact Type"
+                    Width="200px" />
+    </GridColumns>
+
+</SfGrid>
+
+<ConfirmDelete @ref="_confirmDelete" OnDelete="Delete" OnClose="ActionCancelled"/>
+
+<Edit @ref="_edit"
+      SelectedItem="State.Value.SelectedItem"
+      OnSucess="Refresh"
+      OnCancel="@(async () => await _grid.ClearSelectionAsync())"/>

@@ -1,0 +1,19 @@
+﻿@page "/"
+
+<PageTitle>Index</PageTitle>
+
+<AuthorizeView>
+    <Authorized>
+        <h1>Hello, @context.User.Identity?.Name!</h1>
+
+        Welcome to ARMM Services Job File System.
+
+
+
+    </Authorized>
+    <NotAuthorized>
+
+        <h1>Hello, login to get started</h1>
+    </NotAuthorized>
+</AuthorizeView>
+

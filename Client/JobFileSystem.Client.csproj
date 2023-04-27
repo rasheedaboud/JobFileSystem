@@ -1,0 +1,64 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.BlazorWebAssembly">
+
+	<PropertyGroup>
+		<TargetFramework>net6.0</TargetFramework>
+		<Nullable>enable</Nullable>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<BlazorWebAssemblyLoadAllGlobalizationData>true</BlazorWebAssemblyLoadAllGlobalizationData>
+	</PropertyGroup>
+
+	<ItemGroup>
+	  <None Remove="Components\Spin.razor.css" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Content Include="Components\Spin.razor.css" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<TrimmerRootAssembly Include="Microsoft.Authentication.WebAssembly.Msal" />
+		<PackageReference Include="Blazored.FluentValidation" Version="2.0.3" />
+		<PackageReference Include="Fluxor.Blazor.Web" Version="5.4.0" />
+		<PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="6.0.6" />
+		<PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="6.0.6" PrivateAssets="all" />
+		<PackageReference Include="Microsoft.Authentication.WebAssembly.Msal" Version="6.0.6" />
+		<PackageReference Include="Microsoft.Extensions.Http" Version="6.0.0" />
+		<PackageReference Include="MudBlazor" Version="6.0.11" />
+		<PackageReference Include="Syncfusion.Blazor.FileManager" Version="20.2.0.36" />
+		<PackageReference Include="Syncfusion.Licensing" Version="20.2.0.36" />
+		<PackageReference Include="Syncfusion.Blazor.Buttons" Version="20.2.0.36" />
+		<PackageReference Include="Syncfusion.Blazor.Grid" Version="20.2.0.36" />
+		<PackageReference Include="Syncfusion.Blazor.Data" Version="20.2.0.36" />
+		<PackageReference Include="Syncfusion.Blazor.DropDowns" Version="20.2.0.36" />
+		<PackageReference Include="Syncfusion.Blazor.Inputs" Version="20.2.0.36" />
+		<PackageReference Include="Syncfusion.Blazor.Navigations" Version="20.2.0.36" />
+		<PackageReference Include="Syncfusion.Blazor.Popups" Version="20.2.0.36" />
+		<PackageReference Include="Syncfusion.Blazor.Cards" Version="20.2.0.36" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\Shared\JobFileSystem.Shared.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="Features\Contacts\Flux\Actions\" />
+	  <Folder Include="Features\JobFiles\Flux\Actions\" />
+	  <Folder Include="Features\MaterialTestReports\Flux\Actions\" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Content Update="Features\Contacts\Components\Edit.razor">
+	    <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+	  </Content>
+	  <Content Update="Features\Contacts\Pages\Index.razor">
+	    <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+	  </Content>
+	  <Content Update="Features\Estimates\Components\Edit.razor">
+	    <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+	  </Content>
+	  <Content Update="Features\Estimates\Pages\Index.razor">
+	    <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+	  </Content>
+	</ItemGroup>
+
+</Project>

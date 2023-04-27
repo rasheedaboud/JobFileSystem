@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>JobFileSystem</title>
+    <base href="/" />
+    <!-- CSP -->
+    <meta http-equiv="Content-Security-Policy"
+          content="block-all-mixed-content; upgrade-insecure-requests; Object-src 'none'; base-uri 'self';">
+    <meta http-equiv="Content-Security-Policy"
+          content=" img-src 'self'
+                    data: https://*;
+                    script-src 'self' 'unsafe-inline' 'unsafe-eval' https://apis.google.com https://cdn.syncfusion.com blazor.webassembly.js;
+                    style-src 'unsafe-inline' 'self';
+                    style-src-elem 'self' https://fonts.gstatic.com/ https://fonts.googleapis.com/ https://cdn.syncfusion.com 'unsafe-inline';">
+
+    <!-- Site -->
+    <link href="css/app.css" rel="stylesheet" />
+    <script src="js/site.js" type="text/javascript"></script>
+    <link href="JobFileSystem.Client.styles.css" rel="stylesheet" />
+    <!-- MudBlazor -->
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" rel="stylesheet" />
+    <link href="_content/MudBlazor/MudBlazor.min.css" rel="stylesheet" />
+    <!-- Syncfusion -->
+    <link rel="stylesheet" href="https://cdn.syncfusion.com/blazor/20.2.36/styles/bootstrap5.css"
+          asp-fallback-href="_content/Syncfusion.Blazor/styles/bootstrap5.css"
+          asp-fallback-test-class="e-control"
+          asp-fallback-test-property="font-size"
+          asp-fallback-test-value="12px" />
+    <script src="https://cdn.syncfusion.com/blazor/20.2.36/syncfusion-blazor.min.js" " type="text/javascript"></script>
+
+    <!-- spinkit -->
+    <link href="css/spinkit.min.css" rel="stylesheet" />
+    <link href="css/chase.css" rel="stylesheet" />
+    <style>
+        .spin {
+            width: 60px;
+            height: 60px;
+            position: absolute;
+            top: 0;
+            left: 0;
+            bottom: 60px;
+            right: 0;
+            margin: auto;
+        }
+
+        .loading-text {
+            width: 10em;
+            height: 60px;
+            position: absolute;
+            top: 10em;
+            left: 0;
+            bottom: 60px;
+            right: 0;
+            margin: auto;
+        }
+
+        .top {
+            margin-top: 10em;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="app">
+        <div class="spin">
+            <div class="sk-chase">
+                <div class="sk-chase-dot"></div>
+                <div class="sk-chase-dot"></div>
+                <div class="sk-chase-dot"></div>
+                <div class="sk-chase-dot"></div>
+                <div class="sk-chase-dot"></div>
+                <div class="sk-chase-dot"></div>
+            </div>
+        </div>
+        <div class="loading-text">
+            <p><bold>App is Loading please wait...</bold></p>
+
+        </div>
+    </div>
+
+
+    <script src="_content/Microsoft.Authentication.WebAssembly.Msal/AuthenticationService.js"></script>
+    <script src="_framework/blazor.webassembly.js"></script>
+    <script src="_content/MudBlazor/MudBlazor.min.js"></script>
+    <script>
+        Blazor.start({
+            applicationCulture: 'en-CA'
+        });
+    </script>
+</body>
+
+</html>

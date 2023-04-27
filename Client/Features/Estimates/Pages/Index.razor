@@ -1,0 +1,191 @@
+﻿@page "/estimates"
+
+@using Fluxor.Blazor.Web.Components;
+@using JobFileSystem.Client.Features.Estimates.Components
+@using JobFileSystem.Shared.Estimates
+@using Shared.Enums;
+@using Syncfusion.Blazor.Calendars
+@using Syncfusion.Blazor.Grids;
+@using Syncfusion.Blazor.Data;
+@using Syncfusion.Blazor;
+@using Syncfusion.Blazor.Navigations
+@using Syncfusion.Blazor.SplitButtons
+@using global::Client.Features.Estimates;
+@inherits FluxorComponent;
+
+<MudText Typo="Typo.h4"
+         Class="mb-3">Estimates</MudText>
+
+<SfGrid @ref="_grid"
+        TValue="EstimateDto"
+        AllowExcelExport="true"
+        AllowFiltering="true"
+        AllowGrouping="true"
+        AllowMultiSorting="true"
+        AllowPaging="true"
+        AllowResizing="true"
+        AllowSelection="true"
+        AllowTextWrap="true"
+        AllowSorting="true"
+        ContextMenuItems="@(new List<object>(){ "Add","Copy", "Edit", "Delete", "Refresh", "ExcelExport"})" >
+
+
+    <SfToolbar>
+        <ToolbarEvents Clicked="OnToolbarClickHandler" />
+        <ToolbarItems>
+            @if (State.Value.SelectedItem != null)
+            {
+                <ToolbarItem Id="@Buttons.Add"
+                    Text="@Buttons.Add"
+                    PrefixIcon="e-add" />
+                <ToolbarItem Id="@Buttons.Edit"
+                    Text="@Buttons.Edit"
+                    PrefixIcon="e-edit" />
+                <ToolbarItem Id="@Buttons.Delete"
+                    Text="@Buttons.Delete"
+                    PrefixIcon="e-delete" />
+                <ToolbarItem Id="@Buttons.Print"
+                        Text="@Buttons.Print"
+                        PrefixIcon="e-print" >
+                            <Template>
+                                <PrintButton 
+                                    ToolTip="Print Estimate"
+                                    IsBusy="@State.Value.IsLoading"
+                                    onClick="Print"
+                                    IsDisabled="@State.Value.IsLoading"                                    
+                                    />
+                            </Template>
+                </ToolbarItem>
+
+                <ToolbarItem Id="@Buttons.Refresh"
+                    Text="@Buttons.Refresh"
+                    PrefixIcon="e-refresh" />
+            }
+            else
+            {
+            <ToolbarItem Id="@Buttons.Add"
+                         Text="@Buttons.Add"
+                         PrefixIcon="e-add" />
+            <ToolbarItem Id="@Buttons.Refresh"
+                         Text="@Buttons.Refresh"
+                         PrefixIcon="e-refresh" />
+            }
+
+        </ToolbarItems>
+    </SfToolbar>
+
+    <GridFilterSettings Type="Syncfusion.Blazor.Grids.FilterType.Excel" />
+
+    <GridSelectionSettings Mode="Syncfusion.Blazor.Grids.SelectionMode.Row"
+                           Type="SelectionType.Single" />
+
+    <GridEvents RowSelected="RowSelected"
+                RowDeselected="RowDeselected"
+                OnActionBegin="OnBeginHandlerAsync"
+                OnToolbarClick="OnToolbarClickHandler"
+                TValue="EstimateDto" />
+
+    <GridEditSettings AllowAdding="true"
+                      AllowDeleting="true"
+                      AllowEditing="true"
+                      ShowConfirmDialog="true"
+                      Mode="EditMode.Normal" />
+
+    <SfDataManager Adaptor="Adaptors.ODataV4Adaptor"
+                   Url="@(EstimateRoutes.GetAll(NavigationManager.BaseUri))" />
+
+
+    <GridColumns>
+        <GridColumn Field="@(nameof(EstimateDto.Id))"
+                    HeaderText="Id"
+                    IsPrimaryKey="true"
+                    IsIdentity="true"
+                    Visible="false"
+                    Width="200px" />
+
+
+        <GridColumn Field="@(nameof(EstimateDto.Number))"
+                    HeaderText="Estimate No."
+                    Width="200px" />
+
+        <GridColumn Field="@(nameof(EstimateDto.ShortDescription))"
+                    HeaderText="Short Desc."
+                    Width="200px" />
+
+        <GridColumn Field="Client.Name"
+                    HeaderText="Contact Name"
+                    Format="yyy-MM-dd"
+                    Width="200px" />
+        <GridColumn Field="Client.Company"
+                    HeaderText="Company"
+                    Format="yyy-MM-dd"
+                    Width="200px" />
+
+        <GridColumn Field="@(nameof(EstimateDto.Status))"
+                    HeaderText="Status"
+                    Width="200px">
+
+            <Template>
+                @{
+                    var jobFile = (context as EstimateDto);
+                    var status = EstimateStatus.FromName(jobFile?.Status);
+                    if (status == EstimateStatus.New)
+                    {
+                        <MudChip Color="Color.Primary">@status.Name</MudChip>
+
+                    }
+                    else if (status == EstimateStatus.Accepted)
+                    {
+
+                        <MudChip Color="Color.Success">@status.Name</MudChip>
+
+                    }
+                    else if (status == EstimateStatus.Cancelled)
+                    {
+                        <MudChip Color="Color.Dark">@status.Name</MudChip>
+                    }
+                    else if (status == EstimateStatus.InitialReview)
+                    {
+                        <MudChip Color="Color.Info">@status.Name</MudChip>
+                    }
+                    else if (status == EstimateStatus.JobFileIssued)
+                    {
+                        <MudChip Color="Color.Dark">@status.Name</MudChip>
+                    }
+                }
+            </Template>
+
+        </GridColumn>
+
+        <GridColumn Field="@(nameof(EstimateDto.LoggedOn))"
+                    HeaderText="Date Received"
+                    Width="200px" />
+
+        <GridColumn Field="@(nameof(EstimateDto.Subtotal))"
+                    Format="C2"
+                    AllowFiltering="false"
+                    AllowSorting="false"
+                    HeaderText="Sub Total"
+                    Width="200px" />
+        <GridColumn Field="@(nameof(EstimateDto.Gst))"
+                    Format="C2"
+                    AllowFiltering="false"
+                    AllowSorting="false"
+                    HeaderText="GST"
+                    Width="200px" />
+        <GridColumn Field="@(nameof(EstimateDto.Total))"
+                    Format="C2"
+                    AllowFiltering="false"
+                    AllowSorting="false"
+                    HeaderText="Total"
+                    Width="200px" />
+    </GridColumns>
+
+</SfGrid>
+
+<ConfirmDelete @ref="_confirmDelete" OnDelete="Delete" OnClose="ActionCancelled" />
+
+<Edit @ref="_edit"
+      SelectedItem="@(State.Value.SelectedItem ?? new())"
+      OnCancell="@(async () => await _grid.ClearSelectionAsync())"
+      OnSucess=@(async () => await _grid.Refresh()) />

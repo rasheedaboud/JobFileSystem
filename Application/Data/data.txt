@@ -1,0 +1,18 @@
+﻿
+ADD MIGRATION
+
+//FROM SERVER DIRECTORY
+dotnet ef migrations add "refectored jobfile" -p ../Application -o ../Application/Data/Migrations
+
+
+UPDATE 
+//FROM SERVER DIRECTORY
+dotnet ef database update -p ../Application
+
+
+REMOVE
+//FROM SERVER DIRECTORY
+dotnet ef migrations remove -p ../Application
+
+//GENERATE SQL SCRIPT
+dotnet ef migrations script --idempotent

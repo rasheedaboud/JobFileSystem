@@ -1,0 +1,81 @@
+﻿@using Syncfusion.Blazor.Buttons
+
+
+@if (IsBusy)
+{
+    <MudButton Disabled="true"
+           Variant="Variant.Filled"
+           Color="Color.Primary"
+           Class="ml-auto">
+
+
+        <MudProgressCircular Class="ms-n1" Size="Size.Small" Indeterminate="true" />
+        <MudText Class="ms-2">Processing</MudText>
+
+    </MudButton>
+}
+else if (!Enabled)
+{
+    <MudButton Disabled="IsBusy"
+           OnClick="HandleClickBack"
+           Variant="Variant.Outlined"
+           Color="Color.Error"
+           Class="mr-auto">
+
+        <MudText>@CancelText</MudText>
+
+    </MudButton>
+}
+else
+{
+    <MudButton Disabled="IsBusy"
+           OnClick="HandleClickBack"
+           Variant="Variant.Outlined"
+           Color="Color.Error"
+           Class="mr-auto">
+
+        <MudText>@CancelText</MudText>
+
+    </MudButton>
+    <MudButton Disabled="IsBusy"
+           OnClick="HandleClickSubmit"
+           @onkeydown="KeyDownHandler"
+           Variant="Variant.Filled"
+           Color="Color.Primary"
+           Class="ml-auto"
+           ButtonType="ButtonType.Button">
+
+        <MudText>@SubmitText</MudText>
+
+    </MudButton>
+}
+
+
+
+@code {
+
+    [Parameter] public bool IsBusy { get; set; }
+    [Parameter] public string CancelText { get; set; } = "Cancel";
+    [Parameter] public string SubmitText { get; set; } = "Submit";
+
+    [Parameter] public EventCallback<MouseEventArgs> onClickSubmit { get; set; }
+    [Parameter] public EventCallback<MouseEventArgs> onClickBack { get; set; }
+    [Parameter] public bool Enabled { get; set; } = true;
+
+    private async Task HandleClickSubmit()
+    {
+        await onClickSubmit.InvokeAsync(null);
+    }
+
+    private async Task HandleClickBack()
+    {
+        await onClickBack.InvokeAsync(null);
+    }
+    void KeyDownHandler(KeyboardEventArgs args)
+    {
+        if (args.Key == "Enter")
+        {
+            return;
+        }
+    }
+}

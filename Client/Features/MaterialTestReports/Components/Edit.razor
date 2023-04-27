@@ -1,0 +1,210 @@
+﻿@using Fluxor;
+@using JobFileSystem.Client.Features.Attachments.Actions;
+@using JobFileSystem.Client.Features.Attachments.Components;
+@using JobFileSystem.Shared.Contacts;
+@using JobFileSystem.Shared.Enums
+@using JobFileSystem.Shared.DTOs;
+@using Syncfusion.Blazor.Buttons;
+@using Syncfusion.Blazor.Data;
+@using Syncfusion.Blazor.Inputs;
+@using Syncfusion.Blazor.Popups;
+@using Syncfusion.Blazor.DropDowns;
+@using global::Client.Features.Contacts;
+@using global::Client.Features.MaterialTestReports;
+
+
+    <SfDialog @ref="@_modal"
+          AllowDragging="true"
+          Width="90%"
+          ShowCloseIcon="false"
+          CloseOnEscape="false"
+          IsModal="true"
+          ZIndex="1000"
+          Visible="false">
+
+    <DialogTemplates>
+        <Header>
+            @if (String.IsNullOrEmpty(SelectedItem.Id))
+            {
+                <strong>Add MTR</strong>
+            }
+            else
+            {
+                <strong>Edit MTR:@SelectedItem.HeatNumber</strong>
+            }
+        </Header>
+        <Content>
+            @if (SelectedItem != null)
+            {
+                <EditForm Model="@SelectedItem"  autocomplete="on">
+                    <CustomValidation @ref="_customValidation" />
+                    <MudGrid>
+                        <MudItem xs="12">
+                            <MudCard>
+                                <MudCardContent>
+                                    <div class="form-row mb-5">
+                                        <div class="form-group col-lg">
+                                            <SfTextBox @bind-Value="@SelectedItem.HeatNumber"
+                                                   Placeholder="Heat No."
+                                                   FloatLabelType="FloatLabelType.Always" />
+
+                                            <small><ValidationMessage For="@(() => SelectedItem.HeatNumber)" /></small>
+                                        </div>
+                                    </div>
+                                    <div class="form-row mb-5">
+                                        <div class="form-group col-lg">
+                                            <SfTextBox @bind-Value="@SelectedItem.MaterialType"
+                                                   Placeholder="Type"
+                                                   FloatLabelType="FloatLabelType.Always" />
+
+                                            <small><ValidationMessage For="@(() => SelectedItem.MaterialType)" /></small>
+                                        </div>
+                                    </div>
+                                    <div class="form-row mb-5">
+                                        <div class="form-group col-lg">
+                                            <SfTextBox @bind-Value="@SelectedItem.MaterialGrade"
+                                                   Placeholder="Grade"
+                                                   FloatLabelType="FloatLabelType.Always" />
+
+                                            <small><ValidationMessage For="@(() => SelectedItem.MaterialGrade)" /></small>
+                                        </div>
+                                    </div>
+                                    <div class="form-row mb-5">
+                                        <div class="form-group col-lg">
+                                            <SfComboBox @bind-Value="@SelectedItem.MaterialForm"
+                                                    TItem="string"
+                                                    TValue="string"
+                                                    Placeholder="Material Form"
+                                                    FloatLabelType="FloatLabelType.Always"
+                                                    DataSource="@(MaterialForm.List.Select(x=>x.Name))">
+
+                                            </SfComboBox>
+
+                                            <small><ValidationMessage For="@(() => SelectedItem.MaterialForm)" /></small>
+                                        </div>
+                                    </div>
+                                    <div class="form-row mb-5">
+                                        <div class="form-group col-lg">
+                                            <SfNumericTextBox @bind-Value="@SelectedItem.Diameter"
+                                                          Min="0"
+                                                          Placeholder="Diameter"
+                                                          FloatLabelType="FloatLabelType.Always" />
+
+                                            <small><ValidationMessage For="@(() => SelectedItem.Diameter)" /></small>
+                                        </div>
+                                    </div>
+                                    <div class="form-row mb-5">
+                                        <div class="form-group col-lg">
+                                            <SfNumericTextBox @bind-Value="@SelectedItem.Thickness"
+                                                          Min="0"
+                                                          Placeholder="THK | SCH"
+                                                          FloatLabelType="FloatLabelType.Always" />
+
+                                            <small><ValidationMessage For="@(() => SelectedItem.Thickness)" /></small>
+                                        </div>
+                                    </div>
+                                    <div class="form-row mb-5">
+                                        <div class="form-group col-lg">
+                                            <SfNumericTextBox @bind-Value="@SelectedItem.Length"
+                                                          Min="0"
+                                                          Placeholder="Length"
+                                                          FloatLabelType="FloatLabelType.Always" />
+
+                                            <small><ValidationMessage For="@(() => SelectedItem.Length)" /></small>
+                                        </div>
+                                    </div>
+                                    <div class="form-row mb-5">
+                                        <div class="form-group col-lg">
+                                            <SfNumericTextBox @bind-Value="@SelectedItem.Width"
+                                                          Min="0"
+                                                          Placeholder="Width"
+                                                          FloatLabelType="FloatLabelType.Always" />
+
+                                            <small><ValidationMessage For="@(() => SelectedItem.Width)" /></small>
+                                        </div>
+                                    </div>
+                                    <div class="form-row mb-5">
+                                        <div class="form-group col-lg">
+                                            <SfTextBox @bind-Value="@SelectedItem.Location"
+                                                   Placeholder="Location"
+                                                   FloatLabelType="FloatLabelType.Always" />
+
+                                            <small><ValidationMessage For="@(() => SelectedItem.Location)" /></small>
+                                        </div>
+                                    </div>
+                                    <div class="form-row mb-5">
+                                        <div class="form-group col-lg">
+                                            <SfNumericTextBox @bind-Value="@SelectedItem.Quantity"
+                                                          Min="1"
+                                                          Placeholder="Quantity"
+                                                          FloatLabelType="FloatLabelType.Always" />
+
+                                            <small><ValidationMessage For="@(() => SelectedItem.Quantity)" /></small>
+                                        </div>
+                                    </div>
+                                    <div class="form-row mb-5">
+                                        <div class="form-group col-lg">
+                                            <SfTextBox @bind-Value="@SelectedItem.UnitOfMeasure"
+                                                   Placeholder="Unit"
+                                                   FloatLabelType="FloatLabelType.Always" />
+
+                                            <small><ValidationMessage For="@(() => SelectedItem.UnitOfMeasure)" /></small>
+                                        </div>
+                                    </div>
+                                    <div class="form-row mb-5">
+                                        <div class="form-group col-lg">
+                                            <SfTextBox @bind-Value="@SelectedItem.Vendor"
+                                                   Placeholder="Vendor"
+                                                   FloatLabelType="FloatLabelType.Always" />
+
+                                            <small><ValidationMessage For="@(() => SelectedItem.Vendor)" /></small>
+                                        </div>
+                                    </div>
+                                    <div class="form-row mb-5">
+                                        <div class="form-group col-lg">
+                                            <SfTextBox @bind-Value="@SelectedItem.Description"
+                                                   Multiline="true"
+                                                   Placeholder="Description"
+                                                   FloatLabelType="FloatLabelType.Always" />
+
+                                            <small><ValidationMessage For="@(() => SelectedItem.Description)" /></small>
+                                        </div>
+                                    </div>
+
+                                    @if (!String.IsNullOrEmpty(SelectedItem.Id))
+                                    {            
+
+                                        <MudPaper Square=true
+                                          Style="padding:1.5em">
+                                            <MudText Typo="Typo.h6"
+                                             Style="margin-bottom:1.5em">Attachments</MudText>
+
+                                            <Attachments TValue="MaterialTestReportDto"
+                                                 IsEnabled="true"
+                                                 TState="MaterialTestReportState"
+                                                 AddUrl="@(MaterialTestReportRoutes.AddAttachmentToMaterialTestReport(SelectedItem.Id))"
+                                                 DeleteUrl="@(MaterialTestReportRoutes.RemoveAttachmentFromMaterialTestReport(SelectedItem.Id))" />
+                                        </MudPaper>
+
+                                    }
+                                </MudCardContent>
+                                <MudCardActions>
+                                    <SpinnerButton 
+                                        IsBusy="@State.Value.IsLoading" 
+                                        onClickBack="OnClickBackButton"
+                                        onClickSubmit="HandleValidSubmit"/>
+                                </MudCardActions>
+                            </MudCard>
+                        </MudItem>
+                    </MudGrid>
+
+                </EditForm>
+            }
+
+        </Content>
+    </DialogTemplates>
+</SfDialog>
+
+
+
+

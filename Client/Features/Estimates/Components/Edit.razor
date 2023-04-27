@@ -1,0 +1,210 @@
+﻿@using Fluxor;
+@using Fluxor.Blazor.Web.Components;
+@using JobFileSystem.Client.Features.Attachments.Actions;
+@using JobFileSystem.Client.Features.Attachments.Components;
+@using JobFileSystem.Shared.Contacts;
+@using JobFileSystem.Shared.Enums;
+@using JobFileSystem.Shared.Estimates;
+@using Syncfusion.Blazor.Buttons;
+@using Syncfusion.Blazor.Data;
+@using Syncfusion.Blazor.Inputs;
+@using Syncfusion.Blazor.Popups
+@using Syncfusion.Blazor.Calendars;
+@using Syncfusion.Blazor.DropDowns;
+@using global::Client.Features.Contacts;
+@using global::Client.Features.Estimates;
+@inherits FluxorComponent;
+
+<SfDialog @ref="@_modal"
+          AllowDragging="true"
+          Width="90%"
+          ShowCloseIcon="false"
+          CloseOnEscape="false"
+          IsModal="true"
+          ZIndex="1000"
+          Visible="false">
+
+    <DialogTemplates>
+        <Header>
+            @if (String.IsNullOrEmpty(SelectedItem.Id))
+            {
+                <strong>Add Estimate</strong>
+            }
+            else if (!SelectedItem.CanEdit)
+            {
+                <strong>Estimate:@SelectedItem.Number Details</strong>
+            }
+            else
+            {
+                <strong>Edit Estimate:@SelectedItem.Number</strong>
+            }
+        </Header>
+        <Content>
+            @if (SelectedItem != null)
+            {
+                <EditForm Model="@SelectedItem"  autocomplete="on">
+                    <CustomValidation @ref="_customValidation" />
+                    <MudGrid>
+                        <MudItem xs="12">
+                            <MudCard>
+                                <MudCardContent>
+                                    <div class="form-row mb-5">
+                                        <div class="form-group col-lg">
+                                            <SfTextBox @bind-Value="@SelectedItem.ShortDescription"
+                                                   Enabled="@SelectedItem.CanEdit"
+                                                   Placeholder="Short Desc."
+                                                   FloatLabelType="FloatLabelType.Always" />
+
+                                            <small><ValidationMessage For="@(() => SelectedItem.ShortDescription)" /></small>
+                                        </div>
+                                    </div>
+                                    <div class="form-row mb-5">
+                                        <div class="form-group col-lg">
+                                            <SfComboBox @bind-Value="@SelectedItem.Client"
+                                                    Enabled="@SelectedItem.CanEdit"
+                                                    TItem="ContactDto"
+                                                    TValue="ContactDto"
+                                                    Placeholder="Contact"
+                                                    FloatLabelType="FloatLabelType.Always">
+                                                <ComboBoxFieldSettings Text="Name" />
+                                                <SfDataManager Url="@(ContactRoutes.GetAll(NavigationManager.BaseUri))"
+                                                           Adaptor="Syncfusion.Blazor.Adaptors.ODataV4Adaptor" />
+                                            </SfComboBox>
+
+                                            <small><ValidationMessage For="@(() => SelectedItem.Client)" /></small>
+                                        </div>
+                                    </div>
+                                    <div class="form-row mb-5">
+                                        <div class="form-group col-lg">
+                                            <SfDatePicker @bind-Value="@SelectedItem.DeliveryDate"
+                                                      Enabled="@SelectedItem.CanEdit"
+                                                      Placeholder="Est. Delivery Date"
+                                                      FloatLabelType="FloatLabelType.Always">
+                                            </SfDatePicker>
+
+                                            <small><ValidationMessage For="@(() => SelectedItem.DeliveryDate)" /></small>
+                                        </div>
+                                    </div>
+                                    @if (!String.IsNullOrEmpty(SelectedItem.LoggedOn))
+                                    {
+                                        <div class="form-row mb-5">
+                                            <div class="form-group col-lg">
+                                                <SfComboBox @bind-Value="@SelectedItem.Status"
+                                                   Enabled="@(!SelectedItem.JobFileIssued)"
+                                                   Placeholder="Status"
+                                                   FloatLabelType="FloatLabelType.Always"
+                                                   DataSource="@(EstimateStatus.List.Select(x=>x.Name))">
+                                               
+                                               </SfComboBox>
+
+                                                <small><ValidationMessage For="@(() => SelectedItem.Status)" /></small>
+                                            </div>
+                                        </div>
+                                    }
+                                    <div class="form-row mb-5">
+                                        <div class="form-group col-lg">
+                                            <SfTextBox @bind-Value="@SelectedItem.LongDescription"
+                                                   Enabled="@SelectedItem.CanEdit"
+                                                   Multiline="true"
+                                                   Placeholder="Long Desc."
+                                                   FloatLabelType="FloatLabelType.Always" />
+
+                                            <small><ValidationMessage For="@(() => SelectedItem.LongDescription)" /></small>
+                                        </div>
+                                    </div>
+
+                                    @if (!String.IsNullOrEmpty(SelectedItem.LoggedOn))
+                                    {
+                                        
+                                        <LineItems_Index />
+
+                                        <MudPaper Square=true
+                                          Style="padding:1.5em">
+                                            <MudText Typo="Typo.h6"
+                                             Style="margin-bottom:1.5em">Attachments</MudText>
+
+                                            <Attachments TValue="EstimateDto"
+                                                 IsEnabled="@SelectedItem.CanEdit"
+                                                 TState="EstimateState"
+                                                 AddUrl="@(EstimateRoutes.AddAttachmentToEstimate(SelectedItem.Id))"
+                                                 DeleteUrl="@(EstimateRoutes.RemoveAttachmentFromEstimate(SelectedItem.Id))" />
+                                        </MudPaper>
+
+                                    }
+                                </MudCardContent>
+                                <MudCardActions>
+                                    <SpinnerButton 
+                                        IsBusy="@State.Value.IsLoading" 
+                                        onClickBack="OnClickBackButton"
+                                        onClickSubmit="@HandleValidSubmit" />
+                                </MudCardActions>
+                            </MudCard>
+                        </MudItem>
+                    </MudGrid>
+
+                </EditForm>
+            }
+
+        </Content>
+    </DialogTemplates>
+</SfDialog>
+
+
+<SfDialog @ref="@_purchaseOrderModal"
+          AllowDragging="true"
+          Width="50%"
+          ShowCloseIcon="true"
+          CloseOnEscape="true"
+          IsModal="true"
+          ZIndex="1000"
+          Visible="false">
+    <DialogEvents OnClose="@(() => PurchaseOrder = null)" />
+    <DialogTemplates>
+        <Header>
+            
+                <strong>Provide Purchase Order No.</strong>
+            
+        </Header>
+        <Content>
+            <MudGrid>
+                <MudItem xs="12">
+                    <MudCard>
+                        <MudCardContent>
+                            <div class="form-row mb-5">
+                                <div class="form-group col-lg">
+                                    <SfTextBox @bind-Value="@PurchaseOrder"
+                                               Enabled="true"
+                                               Placeholder="PO No."
+                                               FloatLabelType="FloatLabelType.Always" />
+                                </div>
+                            </div>
+                        </MudCardContent>
+                        <MudCardActions>
+                            <div class="form-row mb-5">
+                                <div class="form-group col-lg">
+                                    <MudButton OnClick="UpdateEstimate"
+                                               Variant="MudBlazor.Variant.Filled"
+                                               Color="MudBlazor.Color.Primary"
+                                               Class="ml-auto"
+                                               ButtonType="MudBlazor.ButtonType.Submit">
+
+                                        <MudText>Accept</MudText>
+
+                                    </MudButton>
+                                </div>
+                            </div>
+
+                        </MudCardActions>
+                    </MudCard>
+                </MudItem>
+            </MudGrid>
+
+
+
+
+        </Content>
+    </DialogTemplates>
+</SfDialog>
+
+
+

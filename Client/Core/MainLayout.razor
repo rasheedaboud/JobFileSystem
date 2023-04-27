@@ -1,0 +1,65 @@
+﻿@inherits LayoutComponentBase
+
+<MudThemeProvider Theme=DarkTeme />
+<MudDialogProvider />
+<MudSnackbarProvider Style="z-index: 50000;"/>
+
+
+
+<MudLayout>
+    <MudAppBar Color="Color.Dark" Fixed="false">
+        <AuthorizeView>
+            <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" OnClick="@ToggleDrawer" Edge="Edge.Start" />
+        </AuthorizeView>
+        <MudText Typo="Typo.h6">ARMM Services</MudText>
+        <MudSpacer />
+        <LoginDisplay />
+    </MudAppBar>
+    <AuthorizeView>
+        <MudDrawer @bind-Open="@open" Elevation="1">
+            <CascadingValue TValue="@Action" Value="Toggle">
+                <NavMenu />
+            </CascadingValue>
+        </MudDrawer>
+    </AuthorizeView>
+
+    <MudMainContent Class="pt-16">
+        <MudContainer 
+            Class="mt-6"
+            MaxWidth="MaxWidth.ExtraLarge">
+            @Body
+        </MudContainer>
+    </MudMainContent>
+</MudLayout>
+
+@code
+{
+
+    MudTheme DarkTeme = new MudTheme()
+        {
+            Palette = new Palette()
+            {
+                Primary = Colors.Blue.Default,
+                Secondary = Colors.Green.Accent4,
+                AppbarBackground = Colors.Red.Default,
+            },
+            PaletteDark = new Palette()
+            {
+                Primary = Colors.Blue.Lighten1
+            },
+
+            LayoutProperties = new LayoutProperties()
+            {
+                DrawerWidthLeft = "260px",
+                DrawerWidthRight = "300px"
+            }
+        };
+
+    bool open = false;
+
+    protected Action Toggle => () => ToggleDrawer();
+
+    protected void ToggleDrawer() => open = !open;
+
+
+}

@@ -1,0 +1,69 @@
+﻿@using Syncfusion.Blazor.Popups
+
+<SfDialog @ref="@ConfirmDeleteDialog" Width="35%" AllowDragging="false" ShowCloseIcon="true" IsModal="true" Visible="false">
+    <DialogTemplates>
+        <Header>
+            Are you sure you want to Delete this Record?
+        </Header>
+        <Content>
+            <MudGrid>
+                <MudItem xs="12">
+                    <MudCard>
+                        <MudCardActions>
+                            <MudButton OnClick="Delete"
+                                       Variant="Variant.Filled"
+                                       Color="Color.Primary"
+                                       Class="ml-auto"
+                                       ButtonType="MudBlazor.ButtonType.Button">
+                                <MudText>Delete</MudText>
+                            </MudButton>
+
+
+                            <MudButton OnClick="OnClose"
+                                       Variant="Variant.Outlined"
+                                       Color="Color.Error"
+                                       Class="ml-5"
+                                       ButtonType="MudBlazor.ButtonType.Button">
+                                <MudText>Cancel</MudText>
+                            </MudButton>
+                        </MudCardActions>
+                    </MudCard>
+                </MudItem>
+            </MudGrid>
+        </Content>
+    </DialogTemplates>
+
+</SfDialog>
+
+
+
+
+
+@code {
+
+
+    [Parameter] public EventCallback OnDelete { get; set; }
+    [Parameter] public EventCallback OnClose { get; set; }
+
+    private SfDialog ConfirmDeleteDialog;
+
+
+    public async Task Show()
+    {
+        await ConfirmDeleteDialog.ShowAsync();
+    }
+    public async Task Hide()
+    {
+        await ConfirmDeleteDialog.HideAsync();
+    }
+
+    private async Task Delete()
+    {
+        await OnDelete.InvokeAsync();
+    }
+
+    private async Task Close()
+    {
+        await OnClose.InvokeAsync();
+    }
+}

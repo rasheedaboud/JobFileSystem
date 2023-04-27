@@ -1,0 +1,138 @@
+﻿@page "/mtrs"
+
+@using JobFileSystem.Client.Features.MaterialTestReports.Components
+@using JobFileSystem.Shared.DTOs
+@using Shared.Enums;
+@using Syncfusion.Blazor.Calendars
+@using Syncfusion.Blazor.Grids;
+@using Syncfusion.Blazor.Data;
+@using Syncfusion.Blazor;
+@using Syncfusion.Blazor.Navigations
+@using Syncfusion.Blazor.SplitButtons
+@using global::Client.Features.MaterialTestReports
+
+<MudText Typo="Typo.h4"
+         Class="mb-3">MTR's</MudText>
+
+<SfGrid @ref="_grid"
+        TValue="MaterialTestReportDto"
+        AllowExcelExport="true"
+        AllowFiltering="true"
+        AllowGrouping="true"
+        AllowMultiSorting="true"
+        AllowPaging="true"
+        AllowResizing="true"
+        AllowSelection="true"
+        AllowTextWrap="true"
+        AllowSorting="true"
+        ContextMenuItems="@(new List<object>(){ "Add","Copy", "Edit", "Delete", "Refresh", "ExcelExport"})">
+
+
+    <SfToolbar>
+        <ToolbarEvents Clicked="OnToolbarClickHandler" />
+        <ToolbarItems>
+            @if (State.Value.SelectedItem != null)
+            {
+                <ToolbarItem Id="@Buttons.Add"
+                         Text="@Buttons.Add"
+                         PrefixIcon="e-add" />
+                <ToolbarItem Id="@Buttons.Edit"
+                         Text="@Buttons.Edit"
+                         PrefixIcon="e-edit" />
+                <ToolbarItem Id="@Buttons.Delete"
+                         Text="@Buttons.Delete"
+                         PrefixIcon="e-delete" />
+
+
+                <ToolbarItem Id="@Buttons.Refresh"
+                         Text="@Buttons.Refresh"
+                         PrefixIcon="e-refresh" />
+            }
+            else
+            {
+                <ToolbarItem Id="@Buttons.Add"
+                         Text="@Buttons.Add"
+                         PrefixIcon="e-add" />
+                <ToolbarItem Id="@Buttons.Refresh"
+                         Text="@Buttons.Refresh"
+                         PrefixIcon="e-refresh" />
+            }
+
+        </ToolbarItems>
+    </SfToolbar>
+
+    <GridFilterSettings Type="Syncfusion.Blazor.Grids.FilterType.Excel" />
+
+    <GridSelectionSettings Mode="Syncfusion.Blazor.Grids.SelectionMode.Row"
+                           Type="SelectionType.Single" />
+
+    <GridEvents RowSelected="RowSelected"
+                RowDeselected="RowDeselected"
+                OnActionBegin="OnBeginHandlerAsync"
+                OnToolbarClick="OnToolbarClickHandler"
+                TValue="MaterialTestReportDto" />
+
+    <GridEditSettings AllowAdding="true"
+                      AllowDeleting="true"
+                      AllowEditing="true"
+                      ShowConfirmDialog="true"
+                      Mode="EditMode.Normal" />
+
+    <SfDataManager Adaptor="Adaptors.ODataV4Adaptor"
+                   Url="@(MaterialTestReportRoutes.GetAll(NavigationManager.BaseUri))" />
+
+
+    <GridColumns>
+        <GridColumn Field="@(nameof(MaterialTestReportDto.Id))"
+                    HeaderText="Id"
+                    IsPrimaryKey="true"
+                    IsIdentity="true"
+                    Visible="false"
+                    Width="200px" />
+
+
+        <GridColumn Field="@(nameof(MaterialTestReportDto.HeatNumber))"
+                    HeaderText="Heat No."
+                    Width="200px" />
+
+        <GridColumn Field="@(nameof(MaterialTestReportDto.MaterialType))"
+                    HeaderText="Type"
+                    Width="200px" />
+        <GridColumn Field="@(nameof(MaterialTestReportDto.MaterialGrade))"
+                    HeaderText="Grade"
+                    Width="200px" />
+
+        <GridColumn Field="@(nameof(MaterialTestReportDto.MaterialForm))"
+                    HeaderText="Form"
+                    Width="200px" />
+
+        <GridColumn Field="@(nameof(MaterialTestReportDto.Description))"
+                    HeaderText="Description"
+                    Width="200px" />
+
+        <GridColumn Field="@(nameof(MaterialTestReportDto.Diameter))"
+                    Format="N2"
+                    HeaderText="Diameter"
+                    Width="200px" />
+        <GridColumn Field="@(nameof(MaterialTestReportDto.Thickness))"
+                    Format="N2"
+                    HeaderText="THK | SCH"
+                    Width="200px" />
+        <GridColumn Field="@(nameof(MaterialTestReportDto.Length))"
+                    Format="N2"
+                    HeaderText="Length"
+                    Width="200px" />
+        <GridColumn Field="@(nameof(MaterialTestReportDto.Width))"
+                    Format="N2"
+                    HeaderText="Width"
+                    Width="200px" />
+
+    </GridColumns>
+
+</SfGrid>
+
+<ConfirmDelete @ref="_confirmDelete" OnDelete="Delete" OnClose="ActionCancelled" />
+
+<Edit @ref="_edit"
+      SelectedItem="@(State.Value.SelectedItem ?? new())"
+      OnCancel="@Refresh" />

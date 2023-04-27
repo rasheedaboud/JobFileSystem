@@ -1,0 +1,92 @@
+﻿@using JobFileSystem.Client.Features.Estimates.Components
+@using JobFileSystem.Shared.Attachments
+@using JobFileSystem.Shared.Interfaces
+@using Syncfusion.Blazor.Grids;
+@using Syncfusion.Blazor.Data;
+@using Syncfusion.Blazor;
+@using Syncfusion.Blazor.Inputs
+@using Syncfusion.Blazor.Popups
+@using global::Client.Features.Estimates
+@typeparam TValue where TValue : class, IId, IAttachment, new()
+@typeparam TState where TState : BaseState<TValue>
+
+
+<SfGrid @ref="_grid"
+        TValue="AttachmentDto"
+        AllowExcelExport="true"
+        AllowResizing="true"
+        AllowSelection="true"
+        AllowTextWrap="true"
+        DataSource="@State.Value.SelectedItem.Attachments"
+        ContextMenuItems="@ContextMenu()"
+        Toolbar="@ToolBar()">
+
+    <GridFilterSettings Type="Syncfusion.Blazor.Grids.FilterType.Excel" />
+
+    <GridSelectionSettings Mode="SelectionMode.Row"
+                           Type="SelectionType.Single" />
+
+    <GridEvents RowSelected="RowSelected"
+                RowDeselected="RowDeselected"
+                OnActionBegin="OnBeginHandlerAsync"
+                OnToolbarClick="OnToolbarClickHandler"
+                OnActionFailure="ActionFailureHandler"
+                TValue="AttachmentDto" />
+
+    <GridEditSettings AllowAdding="true"
+                      AllowDeleting="true"
+                      AllowEditing="true"
+                      ShowConfirmDialog="true"
+                      Mode="EditMode.Normal" />
+
+    <GridColumns>
+        <GridColumn Field="@(nameof(AttachmentDto.Id))"
+                    HeaderText="Id"
+                    IsPrimaryKey="true"
+                    IsIdentity="true"
+                    Visible="false"
+                    Width="200px" />
+
+
+        <GridColumn Field="@(nameof(AttachmentDto.FileName))"
+                    HeaderText="File Name"
+                    Width="200px" />
+
+        <GridColumn Field="@(nameof(AttachmentDto.FileExtention))"
+                    HeaderText="File Ext."
+                    Width="200px" />
+
+    </GridColumns>
+
+
+</SfGrid>
+
+<SfDialog @ref="_attachments"
+          AllowDragging="true"
+          Width="50%"
+          ShowCloseIcon="true"
+          CloseOnEscape="true"
+          IsModal="true"
+          ZIndex="1000"
+          Visible="false">
+
+    <DialogTemplates>
+        <Header>
+            Attachments
+        </Header>
+        <Content>
+            <SfUploader @ref="_sfUploader"
+                        AutoUpload="false">
+                <UploaderAsyncSettings 
+                    SaveUrl="@AddUrl" />
+
+                <UploaderEvents Success="UploadSuccess" />
+            </SfUploader>
+
+        </Content>
+    </DialogTemplates>
+</SfDialog>
+
+
+
+<ConfirmDelete @ref="_confirmDelete" OnDelete="Delete" OnClose="ActionCancelled" />

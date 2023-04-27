@@ -1,0 +1,115 @@
+﻿@page "/jobfiles"
+
+@using Fluxor.Blazor.Web.Components;
+@using JobFileSystem.Client.Features.JobFiles.Components
+@using Shared.Enums;
+@using Syncfusion.Blazor.Grids;
+@using Syncfusion.Blazor.Data;
+@using JobFileSystem.Shared.JobFiles
+@using Syncfusion.Blazor;
+@inherits FluxorComponent;
+
+<MudText Typo="Typo.h4"
+         Class="mb-3">Job Files</MudText>
+
+<SfGrid @ref="_grid"
+        TValue="JobFileDto"
+        AllowExcelExport="true"
+        AllowFiltering="true"
+        AllowGrouping="true"
+        AllowMultiSorting="true"
+        AllowPaging="true"
+        AllowResizing="true"
+        AllowSelection="true"
+        AllowTextWrap="true"
+        AllowSorting="true"
+        ContextMenuItems="@(new List<object>(){ "Edit", "Refresh", "ExcelExport"})"
+        Toolbar="@(State.Value.SelectedItem is null ? _toolBar :_toolBarEdit)">
+
+    <GridFilterSettings Type="Syncfusion.Blazor.Grids.FilterType.Excel" />
+
+    <GridSelectionSettings Mode="SelectionMode.Row"
+                           Type="SelectionType.Single" />
+
+    <GridEvents RowSelected="RowSelected"
+                RowDeselected="RowDeselected"
+                OnActionBegin="OnBeginHandlerAsync"
+                OnToolbarClick="OnToolbarClickHandler"
+                TValue="JobFileDto" />
+
+    <GridEditSettings  AllowAdding="true"
+                       AllowDeleting="true"
+                       AllowEditing="true"
+                       ShowConfirmDialog="true"
+                       Mode="EditMode.Normal" />
+
+    <SfDataManager Adaptor="Adaptors.ODataV4Adaptor"
+                   Url="@(JobFileRoutes.GetAll(NavigationManager.BaseUri))" />
+
+
+  <GridColumns>
+        <GridColumn Field="@(nameof(JobFileDto.Id))"
+                    HeaderText="Id"
+                    IsPrimaryKey="true"
+                    IsIdentity="true"
+                    Visible="false"
+                    Width="200px" />
+
+
+        <GridColumn Field="@(nameof(JobFileDto.Number))"
+                    HeaderText="Job No."
+                    Width="200px" />
+
+        <GridColumn Field="@(nameof(JobFileDto.Name))"
+                    HeaderText="Job Name"
+                    Width="200px" />
+
+        <GridColumn Field="@(nameof(JobFileDto.DateReceived))"
+                    HeaderText="Date Received"
+                    Format="yyy-MM-dd"
+                    Width="200px" />
+
+        <GridColumn Field="@(nameof(JobFileDto.ContactCompany))"
+                    HeaderText="Client"
+                    Width="200px" />
+
+        <GridColumn Field="@(nameof(JobFileDto.Status))"
+                    HeaderText="Status"
+                    Width="200px">
+
+            <Template>
+                @{
+                    var jobFile = (context as JobFileDto);
+                    var status = JobStatus.FromName(jobFile?.Status);
+                    if (status == JobStatus.New)
+                    {
+                        <MudChip Color="Color.Primary">@status.Name</MudChip>
+
+                    }
+                    else if (status == JobStatus.Accepted)
+                    {
+
+                        <MudChip Color="Color.Info">@status.Name</MudChip>
+
+                    }
+                    else if (status == JobStatus.Cancelled)
+                    {
+                        <MudChip Color="Color.Dark">@status.Name</MudChip>
+                    }
+                    else if (status == JobStatus.Paid)
+                    {
+                        <MudChip Color="Color.Success">@status.Name</MudChip>
+                    }
+                }
+            </Template>
+
+        </GridColumn>
+    </GridColumns>
+
+</SfGrid>
+
+<ConfirmDelete @ref="_confirmDelete" OnDelete="Delete" OnClose="ActionCancelled"/>
+
+<Edit @ref="_edit"
+      JobFile="State.Value.SelectedItem"
+      OnSucess="Refresh" />

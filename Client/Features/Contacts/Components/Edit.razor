@@ -1,0 +1,121 @@
+﻿@using JobFileSystem.Shared.Enums
+@using Syncfusion.Blazor.Inputs;
+@using Syncfusion.Blazor.Popups
+@using Syncfusion.Blazor.DropDowns;
+
+
+    <SfDialog @ref="@_modal"
+          AllowDragging="true"
+          Width="80%"
+          ShowCloseIcon="false"
+          CloseOnEscape="false"
+          IsModal="true"
+          Visible="false">
+
+        <DialogTemplates>
+            <Header>
+                @if (SelectedItem != null && String.IsNullOrEmpty(SelectedItem.Name))
+                {
+                    <strong>Add Contact</strong>
+                }
+                else
+                {
+                    <strong>Edit Contact:@SelectedItem.Name</strong>
+                }
+            </Header>
+            <Content>
+                @if (SelectedItem != null)
+                {
+                    <EditForm Model="@SelectedItem"  autocomplete="on">
+                        <CustomValidation @ref="_customValidation" />
+                        <MudGrid>
+                            <MudItem xs="12">
+                                <MudCard>
+                                    <MudCardContent>
+                                        <div class="form-row mb-5">
+                                            <div class="form-group col-lg">
+                                                <SfTextBox @bind-Value="@SelectedItem.Name"
+                                                   Placeholder="Name"
+                                                   FloatLabelType="FloatLabelType.Always" />
+
+                                                <small><ValidationMessage For="@(() => SelectedItem.Name)" /></small>
+                                            </div>
+                                        </div>
+                                        <div class="form-row mb-5">
+                                            <div class="form-group col-lg">
+                                                <SfTextBox @bind-Value="@SelectedItem.Company"
+                                                   Placeholder="Company"
+                                                   FloatLabelType="FloatLabelType.Always" />
+
+                                                <small><ValidationMessage For="@(() => SelectedItem.Company)" /></small>
+                                            </div>
+                                        </div>
+                                        <div class="form-row mb-5">
+                                            <div class="form-group col-lg">
+                                                <SfTextBox @bind-Value="@SelectedItem.Email"
+                                                   Placeholder="Email"
+                                                   FloatLabelType="FloatLabelType.Always" />
+
+                                                <small><ValidationMessage For="@(() => SelectedItem.Email)" /></small>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-row mb-5">
+                                            <div class="form-group col-lg">
+                                                <SfTextBox @bind-Value="@SelectedItem.Phone"
+                                                   Placeholder="Phone"
+                                                   FloatLabelType="FloatLabelType.Always" />
+
+                                                <small><ValidationMessage For="@(() => SelectedItem.Phone)" /></small>
+                                            </div>
+                                        </div>
+                                        <div class="form-row mb-5">
+                                            <div class="form-group col-lg">
+                                                <SfComboBox @bind-Value="@SelectedItem.ContactMethod"
+                                                    TItem="string"
+                                                    TValue="string"
+                                                    DataSource="@(ContactMethod.List.Select(x=>x.Name))"
+                                                    Placeholder="Contact Method"
+                                                    FloatLabelType="FloatLabelType.Always">
+                                                </SfComboBox>
+
+                                                <small><ValidationMessage For="@(() => SelectedItem.ContactMethod)" /></small>
+                                            </div>
+                                        </div>
+                                        <div class="form-row mb-5">
+                                            <div class="form-group col-lg">
+                                                <SfComboBox @bind-Value="@SelectedItem.ContactType"
+                                                    TItem="string"
+                                                    TValue="string"
+                                                    DataSource="@(ContactType.List.Select(x=>x.Name))"
+                                                    Placeholder="Contact Type"
+                                                    FloatLabelType="FloatLabelType.Always">
+                                                </SfComboBox>
+
+                                                <small><ValidationMessage For="@(() => SelectedItem.ContactType)" /></small>
+                                            </div>
+                                        </div>
+                                    </MudCardContent>
+                                    <MudCardActions>
+                                        <SpinnerButton 
+                                            IsBusy="@State.Value.IsLoading" 
+                                            onClickBack="OnClickBackButton"
+                                            onClickSubmit="HandleValidSubmit"/>
+                                    </MudCardActions>
+                                </MudCard>
+                            </MudItem>
+                        </MudGrid>
+
+                    </EditForm>
+
+
+                }
+            </Content>
+        </DialogTemplates>
+    </SfDialog>
+
+
+
+
+
+

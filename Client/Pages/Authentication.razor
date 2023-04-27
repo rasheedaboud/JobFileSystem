@@ -1,0 +1,17 @@
+﻿@page "/authentication/{action}"
+@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+<RemoteAuthenticatorView Action="@Action" >
+    <LoggingIn>
+        <Spin Text="Authenticating please wait..." />
+    </LoggingIn>
+    <LogOutSucceeded>
+        <RedirectToHome />
+    </LogOutSucceeded>
+    <LogInFailed>
+        <RedirectToHome />
+    </LogInFailed>
+</RemoteAuthenticatorView>
+
+@code{
+    [Parameter] public string? Action { get; set; }
+}

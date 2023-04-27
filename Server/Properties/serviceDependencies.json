@@ -1,0 +1,15 @@
+{
+  "dependencies": {
+    "identityapp1": {
+      "type": "identityapp",
+      "connectionId": null
+    },
+    "storage1": {
+      "type": "storage",
+      "connectionId": "StorageConnectionString"
+    },
+    "secrets1": {
+      "type": "secrets"
+    }
+  }
+}

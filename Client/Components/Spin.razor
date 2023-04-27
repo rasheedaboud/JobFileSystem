@@ -1,0 +1,30 @@
+﻿
+<MudMainContent Class="pt-16">
+    <MudContainer Class="mt-16">
+        <MudGrid>
+            <MudItem>
+                <div class="spin-comp top">
+                    <div class="sk-chase">
+                        <div class="sk-chase-dot"></div>
+                        <div class="sk-chase-dot"></div>
+                        <div class="sk-chase-dot"></div>
+                        <div class="sk-chase-dot"></div>
+                        <div class="sk-chase-dot"></div>
+                        <div class="sk-chase-dot"></div>
+                    </div>
+                </div>
+                <div class="loading-text-comp top">
+                    <p><bold>@(Text ??= "Please wait...")</bold></p>
+
+                </div>
+            </MudItem>
+        </MudGrid>
+
+
+    </MudContainer>
+</MudMainContent>
+
+
+@code {
+    [Parameter] public string Text { get; set; }
+}

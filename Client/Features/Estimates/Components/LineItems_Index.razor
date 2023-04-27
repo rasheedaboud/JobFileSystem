@@ -1,0 +1,143 @@
+﻿@using Fluxor.Blazor.Web.Components;
+@using JobFileSystem.Client.Features.Attachments.Actions
+@using JobFileSystem.Client.Features.Attachments.Components
+@using JobFileSystem.Client.Features.Estimates.Components
+@using JobFileSystem.Shared.Attachments
+@using JobFileSystem.Shared.Estimates
+@using JobFileSystem.Shared.LineItems
+@using Shared.Enums;
+@using Syncfusion.Blazor.Grids;
+@using Syncfusion.Blazor.Data;
+@using Syncfusion.Blazor;
+@using global::Client.Features.Estimates;
+@inherits FluxorComponent;
+
+<SfGrid @ref="_grid"
+        TValue="LineItemDto"
+        AllowExcelExport="true"
+        AllowResizing="true"
+        AllowSelection="true"
+        AllowTextWrap="true"
+        DataSource="@EstimateState.Value.SelectedItem.LineItems"
+        ContextMenuItems="@ContextMenu()"
+        Toolbar="@ToolBar()">
+
+    <GridFilterSettings Type="Syncfusion.Blazor.Grids.FilterType.Excel" />
+
+    <GridSelectionSettings Mode="SelectionMode.Row"
+                           Type="SelectionType.Single" />
+
+    <GridEvents RowSelected="RowSelected"
+                RowDeselected="RowDeselected"
+                OnActionBegin="OnBeginHandlerAsync"
+                OnToolbarClick="OnToolbarClickHandler"
+                OnActionFailure="ActionFailureHandler"
+                TValue="LineItemDto" />
+
+    <GridEditSettings AllowAdding="true"
+                      AllowDeleting="true"
+                      AllowEditing="true"
+                      ShowConfirmDialog="true"
+                      Mode="EditMode.Normal" />
+
+    <GridColumns>
+        <GridColumn Field="@(nameof(LineItemDto.Id))"
+                    HeaderText="Id"
+                    IsPrimaryKey="true"
+                    IsIdentity="true"
+                    Visible="false"
+                    Width="200px" />
+
+
+        <GridColumn Field="@(nameof(LineItemDto.Qty))"
+                    HeaderText="QTY"
+                    Width="200px" />
+
+        <GridColumn Field="@(nameof(LineItemDto.UnitOfMeasure))"
+                    HeaderText="Unit"
+                    Width="200px" />
+
+        <GridColumn Field="@(nameof(LineItemDto.Description))"
+                    HeaderText="Description"
+                    Format="yyy-MM-dd"
+                    Width="200px" />
+
+        <GridColumn Field="@(nameof(LineItemDto.Delivery))"
+                    HeaderText="Delivery"
+                    Width="200px" />
+
+        <GridColumn Field="@(nameof(LineItemDto.EstimatedUnitPrice))"
+                    Format="C2"
+                    AllowFiltering="false"
+                    AllowSorting="false"
+                    HeaderText="Estimated Unit Price"
+                    Width="200px" />
+        <GridColumn Field="@(nameof(LineItemDto.UnitPrice))"
+                    Format="C2"
+                    AllowFiltering="false"
+                    AllowSorting="false"
+                    HeaderText="Unit Price"
+                    Width="200px" />
+        <GridColumn Field="@(nameof(LineItemDto.LineTotal))"
+                    Format="C2"
+                    AllowFiltering="false"
+                    AllowSorting="false"
+                    HeaderText="Line Total"
+                    Width="200px" />
+    </GridColumns>
+
+    <GridAggregates>
+        <GridAggregate>
+            <GridAggregateColumns>
+                <GridAggregateColumn Field=@nameof(LineItemDto.LineTotal) Type="Syncfusion.Blazor.Grids.AggregateType.Custom">
+                    <FooterTemplate>
+                        @{
+                            <div class="row">
+                                <p>Sub Total: @EstimateState.Value.SelectedItem.Subtotal.ToString("C2")</p>
+                            </div>
+                            <div class="row">
+                                <p>GST: @EstimateState.Value.SelectedItem.Gst.ToString("C2")</p>
+                            </div>
+                            <div class="row"
+                                 style="border-bottom:double black">
+                                <p>Total: @EstimateState.Value.SelectedItem.Total.ToString("C2")</p>
+                            </div>
+                        }
+                    </FooterTemplate>
+                </GridAggregateColumn>
+            </GridAggregateColumns>
+
+        </GridAggregate>
+    </GridAggregates>
+    <GridTemplates>
+        <DetailTemplate Context="LineItemContext">
+            @{
+                var lineItem = (LineItemContext as LineItemDto);
+                @if (LineItemState.Value.SelectedItem != null &&
+                     lineItem.Id == LineItemState.Value.SelectedItem.Id)
+                {
+                    <Attachments 
+                         IsEnabled="@(EstimateState.Value.SelectedItem.CanEdit)" 
+                         OwnedEntity="true"
+                         OnSucess="OnAttachmentAdded"
+                         AddUrl="@(EstimateRoutes.AddAttachmentToLineItem(LineItemState.Value.SelectedItem.Id,EstimateState.Value.SelectedItem.Id))"
+                         DeleteUrl="@(EstimateRoutes.RemoveAttachmentToLineItem(EstimateState.Value.SelectedItem.Id,LineItemState.Value.SelectedItem.Id))"
+                         TValue="LineItemDto"
+                         TState="@LineItemState" />
+                }
+                else
+                {
+                    <MudText Typo="Typo.overline">No records to display</MudText>
+                }
+
+            }
+        </DetailTemplate>
+    </GridTemplates>
+</SfGrid>
+
+<ConfirmDelete @ref="_confirmDelete" OnDelete="Delete" OnClose="ActionCancelled" />
+
+<Edit_LineItem @ref="_edit"
+               SelectedItem="@(LineItemState.Value.SelectedItem ?? new())"
+               OnSucess="Refresh"
+               OnCancell="@(async () => await _grid.ClearSelectionAsync())" />

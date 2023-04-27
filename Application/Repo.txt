@@ -1,0 +1,12 @@
+﻿TO ADD MIGRATION
+Add-Migration "Update Project with ndtcontractor" -p Application -o Data\Migrations
+dotnet ef migrations add "InitialCreate" -p  Application -o Data\Migrations
+
+TO REMOVE MIGRATION
+
+Remove-Migration -p NdtTracking.Application
+
+TO UPDATE
+
+Update-Database -p NdtTracking.Application
+dotnet ef database update -p NdtTracking.Application

@@ -1,0 +1,156 @@
+﻿@using Fluxor.Blazor.Web.Components;
+@using JobFileSystem.Shared.Enums
+@using Syncfusion.Blazor.Inputs;
+@using Syncfusion.Blazor.Popups
+@using Syncfusion.Blazor.DropDowns;
+@using Syncfusion.Blazor.FileManager;
+@using Syncfusion.Blazor.Calendars;
+@inherits FluxorComponent;
+
+<SfDialog @ref="@_modal"
+          AllowDragging="true"
+          Width="80%"
+          ShowCloseIcon="false"
+          CloseOnEscape="false"
+          IsModal="true"
+          ZIndex="10000"
+          Visible="false">
+
+    <DialogTemplates>
+        <Header>
+            @if (String.IsNullOrEmpty(State.Value.SelectedItem.Id))
+            {
+                <strong>Add Job File</strong>
+            }
+            else
+            {
+                <strong>Edit Job File:@State.Value.SelectedItem.Number</strong>
+            }
+        </Header>
+        <Content>
+            @if (JobFile != null)
+            {
+
+
+                <EditForm Model="@JobFile" autocomplete="on">
+                    <CustomValidation @ref="_customValidation" />
+                    <MudGrid>
+                        <MudItem xs="12">
+                            <MudCard>
+                                <MudCardContent>
+                                    <div class="form-row mb-5">
+                                        <div class="form-group col-lg">
+                                            <SfTextBox @bind-Value="@JobFile.Name"
+                                                   Enabled="false"
+                                                   Placeholder="Name"
+                                                   FloatLabelType="FloatLabelType.Always" />
+
+                                            <small><ValidationMessage For="@(() => JobFile.Name)" /></small>
+                                        </div>
+                                    </div>
+                                    <div class="form-row mb-5">
+                                        <div class="form-group col-lg">
+                                            <SfTextBox @bind-Value="@JobFile.Description"
+                                                   Multiline="true"
+                                                   Enabled="false"
+                                                   Placeholder="Job Description"
+                                                   FloatLabelType="FloatLabelType.Always" />
+
+                                            <small><ValidationMessage For="@(() => JobFile.Description)" /></small>
+                                        </div>
+                                    </div>
+                                    <div class="form-row mb-5">
+                                        <div class="form-group col-lg">
+                                            <SfTextBox @bind-Value="@JobFile.PurchaseOrderNumber"
+                                                   Enabled="false"
+                                                   Placeholder="PO No."
+                                                   FloatLabelType="FloatLabelType.Always" />
+
+                                            <small><ValidationMessage For="@(() => JobFile.PurchaseOrderNumber)" /></small>
+                                        </div>
+                                    </div>
+                                    <div class="form-row mb-5">
+                                        <div class="form-group col-lg">
+                                            <SfTextBox @bind-Value="@JobFile.ContactCompany"
+                                                   Enabled="false"
+                                                   Placeholder="Client"
+                                                   FloatLabelType="FloatLabelType.Always" />
+
+                                            <small><ValidationMessage For="@(() => JobFile.ContactCompany)" /></small>
+                                        </div>
+                                    </div>
+                                    <div class="form-row mb-5">
+                                        <div class="form-group col-lg">
+                                            <SfDatePicker @bind-Value="@JobFile.DeliveryDate"
+                                                      Enabled="false"
+                                                      Placeholder="Delivery Date"
+                                                      FloatLabelType="FloatLabelType.Always" />
+
+                                            <small><ValidationMessage For="@(() => JobFile.DeliveryDate)" /></small>
+                                        </div>
+                                    </div>
+                                    <div class="form-row mb-5">
+                                        <div class="form-group col-lg">
+                                            <SfComboBox @bind-Value="@JobFile.Status"
+                                                    TItem="string"
+                                                    TValue="string"
+                                                    Enabled="false"
+                                                    Placeholder="Status"
+                                                    FloatLabelType="FloatLabelType.Always"
+                                                    DataSource="@(JobStatus.List.Select(x=>x.Name))" />
+
+                                            <small><ValidationMessage For="@(() => JobFile.Status)" /></small>
+                                        </div>
+                                    </div>
+
+                                    @if (JobFile != null && !string.IsNullOrEmpty(JobFile.Id))
+                                    {
+                                        <div class="form-row mb-5">
+                                            <div class="form-group col-lg">
+
+                                                <SfFileManager 
+                                                       Height="25rem"
+                                                       TValue="FileManagerDirectoryContent"
+                                                       ShowThumbnail="false"
+                                                       ShowHiddenItems="false"
+                                                       View="ViewType.Details"
+                                                       AllowDragAndDrop="false"
+                                                       AllowMultiSelection="false">
+
+
+
+                                                    <FileManagerAjaxSettings Url="@($"{NavigationManager.BaseUri}api/FileOperations?jobFileNumber={State.Value.SelectedItem.Number}")"
+                                                                     UploadUrl="@($"{NavigationManager.BaseUri}api/FileOperations/Upload?jobFileNumber={State.Value.SelectedItem.Number}")"
+                                                                     DownloadUrl="@($"{NavigationManager.BaseUri}api/FileOperations/Download?jobFileNumber={State.Value.SelectedItem.Number}")" />
+
+                                                    <FileManagerUploadSettings MaxFileSize="500000" />
+
+                                                </SfFileManager>
+
+
+                                            </div>
+                                        </div>
+                                    }
+
+
+
+                                </MudCardContent>
+                                <MudCardActions>
+                                    <SpinnerButton IsBusy="@State.Value.IsLoading"
+                                               onClickBack="OnClickBackButton"
+                                               onClickSubmit="HandleValidSubmit" />
+                                </MudCardActions>
+                            </MudCard>
+                        </MudItem>
+                    </MudGrid>
+
+                </EditForm>
+
+
+            }
+        </Content>
+    </DialogTemplates>
+</SfDialog>
+
+
+
